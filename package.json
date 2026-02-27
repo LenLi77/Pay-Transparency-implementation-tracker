@@ -1,0 +1,21 @@
+{
+  "name": "eu-pay-transparency-tracker",
+  "version": "1.0.0",
+  "description": "EU Pay Transparency Directive Implementation Tracker - Status across all 27 EU member states",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'Static site - no build needed'",
+    "start": "npx serve ."
+  },
+  "keywords": [
+    "eu",
+    "pay-transparency",
+    "directive",
+    "hr",
+    "employment",
+    "baltic",
+    "compliance"
+  ],
+  "author": "Ellen",
+  "license": "MIT"
+}

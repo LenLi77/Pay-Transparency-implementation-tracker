@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EU Pay Transparency Directive - Implementation Tracker | All 27 EU Countries</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Track the implementation status of the EU Pay Transparency Directive (2023/970) across all 27 member states. Live countdown to 7 June 2026 deadline. Special focus on Baltic countries.">
+  <meta name="keywords" content="EU Pay Transparency Directive, pay gap reporting, salary transparency, HR compliance, Baltic countries, Estonia, Latvia, Lithuania, employment law">
+  <meta name="author" content="Ellen">
+  
+  <!-- Open Graph / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="EU Pay Transparency Directive - Implementation Tracker">
+  <meta property="og:description" content="Track implementation status across all 27 EU member states. 10 countries have published drafts, 7 are partial/expected, 10 have no public information yet. Deadline: 7 June 2026.">
+  <meta property="og:image" content="/og-image.png">
+  <meta property="og:url" content="https://your-domain.vercel.app">
+  <meta property="og:site_name" content="EU Pay Transparency Tracker">
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="EU Pay Transparency Directive - Implementation Tracker">
+  <meta name="twitter:description" content="Track implementation status across all 27 EU member states. Deadline: 7 June 2026.">
+  <meta name="twitter:image" content="/og-image.png">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://your-domain.vercel.app">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f8fafc; color: #111827; line-height: 1.5; padding: 32px;
+    }
+    .container { max-width: 1400px; margin: 0 auto; }
+    .card {
+      background: white; border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1); border: 1px solid #e5e7eb; overflow: hidden;
+    }
+    .header {
+      padding: 24px; border-bottom: 1px solid #e5e7eb;
+      background: linear-gradient(to right, #faf5ff, #f0f9ff);
+    }
+    .header-content { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; }
+    .header h1 { font-size: 24px; font-weight: 700; color: #111827; margin-bottom: 4px; }
+    .header p { font-size: 14px; color: #6b7280; }
+    .header strong { color: #dc2626; }
+    .legend { display: flex; gap: 8px; flex-wrap: wrap; font-size: 12px; }
+    .legend-item { padding: 6px 12px; border-radius: 6px; font-weight: 500; }
+    .legend-green { background: #dcfce7; color: #166534; }
+    .legend-yellow { background: #fef3c7; color: #92400e; }
+    .legend-red { background: #fee2e2; color: #991b1b; }
+    .stats-bar {
+      display: flex; gap: 24px; padding: 16px 24px;
+      background: #f9fafb; border-bottom: 1px solid #e5e7eb; flex-wrap: wrap;
+    }
+    .stat { display: flex; align-items: center; gap: 8px; }
+    .stat-number { font-size: 24px; font-weight: 700; }
+    .stat-number.green { color: #16a34a; }
+    .stat-number.yellow { color: #ca8a04; }
+    .stat-number.red { color: #dc2626; }
+    .stat-label { font-size: 12px; color: #6b7280; line-height: 1.3; }
+    .countdown-box {
+      margin-left: auto; background: linear-gradient(135deg, #fef2f2, #fee2e2);
+      border: 1px solid #fecaca; border-radius: 8px; padding: 12px 16px; text-align: center;
+    }
+    .countdown-number { font-size: 32px; font-weight: 800; color: #dc2626; line-height: 1; }
+    .countdown-number.urgent { animation: pulse 1.5s ease-in-out infinite; }
+    .countdown-number.past { color: #991b1b; }
+    .countdown-label { font-size: 11px; color: #991b1b; font-weight: 500; margin-top: 2px; }
+    .countdown-date { font-size: 10px; color: #b91c1c; margin-top: 4px; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+    .notice-bar {
+      padding: 12px 24px; background: #fffbeb; border-bottom: 1px solid #fde68a;
+      font-size: 12px; color: #92400e;
+    }
+    .notice-bar strong { color: #78350f; }
+    .table-wrapper { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+    th {
+      padding: 12px 12px; text-align: left; font-size: 10px; font-weight: 600;
+      color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;
+      background: #f9fafb; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0;
+    }
+    td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
+    tr:hover { background: #f8fafc !important; }
+    tr.baltic { background: #f0f9ff; }
+    tr.baltic:hover { background: #e0f2fe !important; }
+    .country-cell { display: flex; align-items: center; gap: 10px; }
+    .flag { font-size: 20px; }
+    .country-name { font-weight: 500; color: #111827; font-size: 13px; }
+    .country-code { font-size: 10px; color: #9ca3af; }
+    .badge { display: inline-block; padding: 3px 10px; font-size: 11px; font-weight: 500; border-radius: 6px; white-space: nowrap; }
+    .badge-green { background: #dcfce7; color: #166534; }
+    .badge-yellow { background: #fef3c7; color: #92400e; }
+    .badge-red { background: #fee2e2; color: #991b1b; }
+    .badge-baltic { display: inline-block; padding: 2px 6px; font-size: 9px; font-weight: 600; background: #dbeafe; color: #1e40af; border-radius: 4px; margin-left: 6px; }
+    .existing-laws { color: #6b7280; font-size: 12px; }
+    .existing-laws.none { color: #d1d5db; }
+    .details { color: #374151; font-size: 12px; max-width: 260px; }
+    .draft-link { font-size: 10px; margin-top: 4px; }
+    .draft-link a { color: #6366f1; }
+    .expected { font-weight: 500; color: #111827; font-size: 12px; }
+    .expected.none { color: #d1d5db; font-weight: 400; }
+    .verified { font-size: 10px; color: #6b7280; white-space: nowrap; }
+    .verified-check { color: #16a34a; }
+    .footer { padding: 20px 24px; background: #f9fafb; border-top: 1px solid #e5e7eb; }
+    .footer-title { font-size: 13px; font-weight: 600; color: #111827; margin-bottom: 8px; }
+    .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+    .footer-item { padding: 12px; background: white; border-radius: 8px; border: 1px solid #e5e7eb; font-size: 12px; }
+    .footer-item-title { font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; margin-bottom: 4px; }
+    .eea-box { margin-top: 24px; padding: 16px; background: #faf5ff; border: 1px solid #e9d5ff; border-radius: 8px; }
+    .eea-box-title { font-size: 12px; font-weight: 600; color: #7c3aed; margin-bottom: 8px; }
+    .eea-box-content { font-size: 11px; color: #6b21a8; line-height: 1.5; }
+    .caveat-box { margin-top: 16px; padding: 12px 16px; background: #fefce8; border: 1px solid #fde047; border-radius: 8px; font-size: 11px; color: #854d0e; }
+    .caveat-box strong { color: #713f12; }
+    .updated { text-align: right; font-size: 11px; color: #9ca3af; padding: 12px 24px; border-top: 1px solid #e5e7eb; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <div class="header">
+        <div class="header-content">
+          <div>
+            <h1>🇪🇺 EU Pay Transparency Directive</h1>
+            <p>Implementation status across EU member states • Deadline: <strong>7 June 2026</strong></p>
+          </div>
+          <div class="legend">
+            <span class="legend-item legend-green">● Draft published</span>
+            <span class="legend-item legend-yellow">● Partial / Expected</span>
+            <span class="legend-item legend-red">● No information currently</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="stats-bar">
+        <div class="stat">
+          <span class="stat-number green">10</span>
+          <span class="stat-label">Draft<br>published</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number yellow">7</span>
+          <span class="stat-label">Partial /<br>Expected</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number red">10</span>
+          <span class="stat-label">No info<br>currently</span>
+        </div>
+        <div class="countdown-box">
+          <div class="countdown-number" id="countdown-days">--</div>
+          <div class="countdown-label" id="countdown-label">days until deadline</div>
+          <div class="countdown-date">7 June 2026</div>
+        </div>
+      </div>
+      
+      <div class="notice-bar">
+        <strong>⚠️ Important:</strong> "No information currently" means no publicly documented transposition activity was found — it does not mean the country is taking no action. Preparatory work may be underway without public documentation.
+      </div>
+      
+      <script>
+        function updateCountdown() {
+          const deadline = new Date('2026-06-07T00:00:00');
+          const now = new Date();
+          const diffTime = deadline - now;
+          const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+          const countdownEl = document.getElementById('countdown-days');
+          const labelEl = document.getElementById('countdown-label');
+          if (diffDays > 0) {
+            countdownEl.textContent = diffDays;
+            labelEl.textContent = diffDays === 1 ? 'day until deadline' : 'days until deadline';
+            if (diffDays <= 30) { countdownEl.classList.add('urgent'); }
+            else { countdownEl.classList.remove('urgent'); }
+          } else if (diffDays === 0) {
+            countdownEl.textContent = 'TODAY';
+            countdownEl.classList.add('urgent');
+            labelEl.textContent = 'is the deadline!';
+          } else {
+            countdownEl.textContent = Math.abs(diffDays);
+            countdownEl.classList.add('past');
+            labelEl.textContent = Math.abs(diffDays) === 1 ? 'day past deadline' : 'days past deadline';
+          }
+        }
+        updateCountdown();
+        setInterval(updateCountdown, 3600000);
+      </script>
+      
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Status</th>
+              <th>Existing Laws</th>
+              <th>Implementation Details</th>
+              <th>Expected</th>
+              <th>Verified</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- DRAFT PUBLISHED (10) -->
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇸🇪</span><div><div class="country-name">Sweden</div><div class="country-code">SE</div></div></div></td>
+              <td><span class="badge badge-green">Draft published</span></td>
+              <td class="existing-laws">Detailed pay analysis regime</td>
+              <td class="details">First EU country to publish draft (May 2024). 388-page proposal. Reporting from 10+ employees<div class="draft-link">📄 <a href="https://www.regeringen.se/rattsliga-dokument/statens-offentliga-utredningar/2024/05/sou-202440/" target="_blank">SOU 2024:40</a></div></td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr class="baltic">
+              <td><div class="country-cell"><span class="flag">🇱🇹</span><div><div class="country-name">Lithuania<span class="badge-baltic">BALTIC</span></div><div class="country-code">LT</div></div></div></td>
+              <td><span class="badge badge-green">Draft published</span></td>
+              <td class="existing-laws">Salary in job ads required</td>
+              <td class="details">Draft registered 12 Sept 2025. Salary history ban, pay gap reporting, 5% action threshold. Fines up to €6,000<div class="draft-link">📄 <a href="https://e-seimas.lrs.lt/portal/legalAct/lt/TAP/9171dec28d2511efaf94d67dd8b48a7c" target="_blank">Draft XIV-3034</a></div></td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇫🇮</span><div><div class="country-name">Finland</div><div class="country-code">FI</div></div></div></td>
+              <td><span class="badge badge-green">Draft published</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">Draft published May 2025. Comments due Feb 2026. Fines €5,000–€80,000<div class="draft-link">📄 <a href="https://stm.fi/en/project?tunnus=STM069:00/2024" target="_blank">STM069:00/2024</a></div></td>
+              <td class="expected">May 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇳🇱</span><div><div class="country-name">Netherlands</div><div class="country-code">NL</div></div></div></td>
+              <td><span class="badge badge-yellow">Draft (delayed)</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">Draft published but implementation delayed to Jan 2027. EU rejected postponement request<div class="draft-link">📄 <a href="https://www.internetconsultatie.nl/loontransparantie" target="_blank">Internetconsultatie</a></div></td>
+              <td class="expected" style="color: #dc2626;">Jan 2027 ⚠️</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇸🇰</span><div><div class="country-name">Slovakia</div><div class="country-code">SK</div></div></div></td>
+              <td><span class="badge badge-green">Draft published</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">Draft Equal Pay Act published Sept 2025. Fines up to €4,000<div class="draft-link">📄 <a href="https://www.slov-lex.sk/legislativne-procesy/SK/LP/2025/440" target="_blank">Slov-Lex LP/2025/440</a></div></td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇮🇹</span><div><div class="country-name">Italy</div><div class="country-code">IT</div></div></div></td>
+              <td><span class="badge badge-green">Draft published</span></td>
+              <td class="existing-laws">Biennial reporting (50+)</td>
+              <td class="details">Draft implementing decree approved Feb 2026 by Council of Ministers<div class="draft-link">📄 <a href="https://www.governo.it/it/consiglio-dei-ministri" target="_blank">Council of Ministers</a></div></td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇨🇾</span><div><div class="country-name">Cyprus</div><div class="country-code">CY</div></div></div></td>
+              <td><span class="badge badge-green">Draft published</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">Detailed draft published for consultation Nov 2025<div class="draft-link">📄 <a href="http://www.mlsi.gov.cy/" target="_blank">Ministry of Labour</a></div></td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇮🇪</span><div><div class="country-name">Ireland</div><div class="country-code">IE</div></div></div></td>
+              <td><span class="badge badge-yellow">Partial</span></td>
+              <td class="existing-laws">Pay Gap reporting (50+)</td>
+              <td class="details">Equality Bill 2024 covers recruitment. Salary history ban + ranges in job ads<div class="draft-link">📄 <a href="https://www.gov.ie/en/publication/e2cc9-general-scheme-of-the-equality-miscellaneous-provisions-bill-2024/" target="_blank">Equality Bill 2024</a></div></td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇲🇹</span><div><div class="country-name">Malta</div><div class="country-code">MT</div></div></div></td>
+              <td><span class="badge badge-yellow">Partial</span></td>
+              <td class="existing-laws">Salary disclosure (Aug 2025)</td>
+              <td class="details">Pre-employment transparency in force Aug 2025. Full implementation pending<div class="draft-link">📄 <a href="https://legislation.mt/eli/ln/2025/112/eng" target="_blank">Legal Notice 112/2025</a></div></td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇵🇱</span><div><div class="country-name">Poland</div><div class="country-code">PL</div></div></div></td>
+              <td><span class="badge badge-yellow">Partial</span></td>
+              <td class="existing-laws">Recruitment (Dec 2025)</td>
+              <td class="details">Labour Code passed Dec 2025. Salary info + history ban in force<div class="draft-link">📄 <a href="https://www.sejm.gov.pl/" target="_blank">Sejm Amendment</a></div></td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            
+            <!-- DRAFT EXPECTED / PARTIAL (7) -->
+            <tr class="baltic">
+              <td><div class="country-cell"><span class="flag">🇪🇪</span><div><div class="country-name">Estonia<span class="badge-baltic">BALTIC</span></div><div class="country-code">EE</div></div></div></td>
+              <td><span class="badge badge-yellow">Draft expected</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">Ministry draft expected summer 2025 - not yet published. Minimum requirements approach<div class="draft-link" style="color: #6366f1;">🔧 Palgapeegel (Pay Mirror) tool in development</div></td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇩🇪</span><div><div class="country-name">Germany</div><div class="country-code">DE</div></div></div></td>
+              <td><span class="badge badge-yellow">Draft expected</span></td>
+              <td class="existing-laws">Pay Transparency Act (limited)</td>
+              <td class="details">Commission report Nov 2025. Draft bill expected early 2026</td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇫🇷</span><div><div class="country-name">France</div><div class="country-code">FR</div></div></div></td>
+              <td><span class="badge badge-yellow">Draft expected</span></td>
+              <td class="existing-laws">Gender Equality Index</td>
+              <td class="details">Consultations ongoing. Bill expected before summer 2026</td>
+              <td class="expected">Summer 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇧🇪</span><div><div class="country-name">Belgium</div><div class="country-code">BE</div></div></div></td>
+              <td><span class="badge badge-yellow">Partial</span></td>
+              <td class="existing-laws">Reporting for 50+</td>
+              <td class="details">Existing reporting. Resolution for full transposition Jan 2026</td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇨🇿</span><div><div class="country-name">Czechia</div><div class="country-code">CZ</div></div></div></td>
+              <td><span class="badge badge-yellow">Partial</span></td>
+              <td class="existing-laws">Pay secrecy ban (June 2025)</td>
+              <td class="details">Pay secrecy ban effective June 2025. Full draft expected early 2026</td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇷🇴</span><div><div class="country-name">Romania</div><div class="country-code">RO</div></div></div></td>
+              <td><span class="badge badge-yellow">Draft expected</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">Draft under development at Ministry. Final stage of preparation</td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇪🇸</span><div><div class="country-name">Spain</div><div class="country-code">ES</div></div></div></td>
+              <td><span class="badge badge-yellow">Draft expected</span></td>
+              <td class="existing-laws">Pay register + audit (50+)</td>
+              <td class="details">Already has gender pay register. Directive alignment pending</td>
+              <td class="expected">June 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇧🇬</span><div><div class="country-name">Bulgaria</div><div class="country-code">BG</div></div></div></td>
+              <td><span class="badge badge-yellow">Draft expected</span></td>
+              <td class="existing-laws">Equal pay in Labour Code</td>
+              <td class="details">Action plan Feb 2025. Parliamentary deadline: 29 May 2026</td>
+              <td class="expected">May 2026</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            
+            <!-- NO INFORMATION CURRENTLY (10) -->
+            <tr class="baltic">
+              <td><div class="country-cell"><span class="flag">🇱🇻</span><div><div class="country-name">Latvia<span class="badge-baltic">BALTIC</span></div><div class="country-code">LV</div></div></div></td>
+              <td><span class="badge badge-red">No information currently</span></td>
+              <td class="existing-laws">Salary in job ads (2018)</td>
+              <td class="details">Draft expected before Christmas 2025 per Ministry - not yet published. Conference Oct 2025</td>
+              <td class="expected none">—</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇦🇹</span><div><div class="country-name">Austria</div><div class="country-code">AT</div></div></div></td>
+              <td><span class="badge badge-red">No information currently</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">No transposition activity reported</td>
+              <td class="expected none">—</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇭🇷</span><div><div class="country-name">Croatia</div><div class="country-code">HR</div></div></div></td>
+              <td><span class="badge badge-red">No information currently</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">No specific laws. Must introduce new legislation</td>
+              <td class="expected none">—</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇩🇰</span><div><div class="country-name">Denmark</div><div class="country-code">DK</div></div></div></td>
+              <td><span class="badge badge-red">No information currently</span></td>
+              <td class="existing-laws">Wage stats for 35+</td>
+              <td class="details">Not in 2025-2026 legislative program</td>
+              <td class="expected none">—</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇬🇷</span><div><div class="country-name">Greece</div><div class="country-code">EL</div></div></div></td>
+              <td><span class="badge badge-red">No information currently</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">Working group established, no draft published</td>
+              <td class="expected none">—</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇭🇺</span><div><div class="country-name">Hungary</div><div class="country-code">HU</div></div></div></td>
+              <td><span class="badge badge-red">No information currently</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">No transposition activity reported</td>
+              <td class="expected none">—</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇱🇺</span><div><div class="country-name">Luxembourg</div><div class="country-code">LU</div></div></div></td>
+              <td><span class="badge badge-red">No information currently</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">No transposition activity reported</td>
+              <td class="expected none">—</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇵🇹</span><div><div class="country-name">Portugal</div><div class="country-code">PT</div></div></div></td>
+              <td><span class="badge badge-red">No information currently</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">No transposition activity reported</td>
+              <td class="expected none">—</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+            <tr>
+              <td><div class="country-cell"><span class="flag">🇸🇮</span><div><div class="country-name">Slovenia</div><div class="country-code">SI</div></div></div></td>
+              <td><span class="badge badge-red">No information currently</span></td>
+              <td class="existing-laws none">—</td>
+              <td class="details">No transposition activity reported</td>
+              <td class="expected none">—</td>
+              <td class="verified"><span class="verified-check">✓</span> Feb 2026</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+      <div class="footer">
+        <div class="footer-title">Key Requirements from 7 June 2026</div>
+        <div class="footer-grid">
+          <div class="footer-item">
+            <div class="footer-item-title">Job Postings</div>
+            Salary ranges in job ads or before interviews
+          </div>
+          <div class="footer-item">
+            <div class="footer-item-title">Salary History</div>
+            Employers banned from asking about previous salaries
+          </div>
+          <div class="footer-item">
+            <div class="footer-item-title">Right to Information</div>
+            Employees can request pay data by gender
+          </div>
+          <div class="footer-item">
+            <div class="footer-item-title">Pay Gap Reporting</div>
+            150+ employees from 2027 • 100+ from 2031
+          </div>
+        </div>
+        
+        <div class="eea-box">
+          <div class="eea-box-title">🇳🇴🇮🇸🇱🇮 EEA Countries Also Affected</div>
+          <div class="eea-box-content">
+            <strong>Norway, Iceland, and Liechtenstein</strong> are not EU members but participate in the European Economic Area (EEA). 
+            The Pay Transparency Directive must be incorporated into the EEA Agreement before these countries transpose it into national law. 
+            Timeline may differ from EU member states, but similar requirements will apply. This tracker focuses on EU-27 member states only.
+          </div>
+        </div>
+        
+        <div class="caveat-box">
+          <strong>📋 Methodology note:</strong> "No information currently" indicates that no publicly available transposition documentation was found through official government portals, EUR-Lex, or established legal trackers. 
+          This does <em>not</em> mean a country is taking no action — preparatory work, internal consultations, or draft legislation may be underway without public documentation. 
+          Status can change rapidly; corrections and updates are welcome.
+        </div>
+        
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+          <div class="footer-title">Data Sources</div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 12px;">
+            <div style="background: #f0fdf4; padding: 12px; border-radius: 8px; border: 1px solid #bbf7d0;">
+              <div style="font-weight: 600; color: #166534; font-size: 12px; margin-bottom: 4px;">⭐ Primary Official Sources</div>
+              <div style="font-size: 11px; color: #166534;">
+                • <a href="https://eur-lex.europa.eu/eli/dir/2023/970/oj/eng" target="_blank" style="color: #166534;">EUR-Lex</a> - Official EU law database<br>
+                • National ministry portals (linked per country)<br>
+                • European Commission statements
+              </div>
+            </div>
+            <div style="background: #eff6ff; padding: 12px; border-radius: 8px; border: 1px solid #bfdbfe;">
+              <div style="font-weight: 600; color: #1e40af; font-size: 12px; margin-bottom: 4px;">📊 Tracking Sources</div>
+              <div style="font-size: 11px; color: #1e40af;">
+                • <a href="https://www.pinsentmasons.com/out-law/guides/eu-pay-transparency-directive-eu-member-states" target="_blank" style="color: #1e40af;">Pinsent Masons</a> - International law firm<br>
+                • <a href="https://www.addleshawgoddard.com/globalassets/insights/employment/eu-pay-transparency-directive-implementation-tracker.pdf" target="_blank" style="color: #1e40af;">Addleshaw Goddard</a> - Law firm tracker<br>
+                • <a href="https://www.eurofound.europa.eu/" target="_blank" style="color: #1e40af;">Eurofound</a> - Official EU agency
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e5e7eb;">
+          <div class="footer-title">🇪🇪🇱🇻🇱🇹 Baltic Countries - Official Ministry Links</div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 12px;">
+            <div style="background: #f0f9ff; padding: 12px; border-radius: 8px; border: 1px solid #bae6fd;">
+              <div style="font-weight: 600; color: #0369a1; font-size: 12px;">🇪🇪 Estonia</div>
+              <div style="font-size: 10px; color: #0c4a6e; margin-top: 4px;">
+                <a href="https://www.mkm.ee/en/work-and-equal-opportunities/employment-relationships-and-work-environment/pay-transparency" target="_blank" style="color: #0369a1;">Ministry of Economic Affairs</a>
+              </div>
+            </div>
+            <div style="background: #f0f9ff; padding: 12px; border-radius: 8px; border: 1px solid #bae6fd;">
+              <div style="font-weight: 600; color: #0369a1; font-size: 12px;">🇱🇻 Latvia</div>
+              <div style="font-size: 10px; color: #0c4a6e; margin-top: 4px;">
+                <a href="https://www.lm.gov.lv/" target="_blank" style="color: #0369a1;">Ministry of Welfare</a>
+              </div>
+            </div>
+            <div style="background: #f0f9ff; padding: 12px; border-radius: 8px; border: 1px solid #bae6fd;">
+              <div style="font-weight: 600; color: #0369a1; font-size: 12px;">🇱🇹 Lithuania</div>
+              <div style="font-size: 10px; color: #0c4a6e; margin-top: 4px;">
+                <a href="https://socmin.lrv.lt/" target="_blank" style="color: #0369a1;">Ministry of Social Security</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="updated">
+        Last updated: 27 February 2026 • Next review: March 2026 • Corrections welcome
+      </div>
+    </div>
+  </div>
+</body>
+</html>
