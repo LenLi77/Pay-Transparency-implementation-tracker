@@ -82,6 +82,10 @@
       color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em;
       background: #f9fafb; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0;
     }
+    th.sortable { cursor: pointer; user-select: none; }
+    th.sortable:hover { background: #f1f5f9; color: #374151; }
+    th.sort-asc::after { content: ' ↑'; color: #6366f1; }
+    th.sort-desc::after { content: ' ↓'; color: #6366f1; }
     td { padding: 10px 12px; border-bottom: 1px solid #f3f4f6; font-size: 13px; }
     tr:hover { background: #f8fafc !important; }
     tr.baltic { background: #f0f9ff; }
@@ -189,11 +193,11 @@
         <table>
           <thead>
             <tr>
-              <th>Country</th>
-              <th>Status</th>
+              <th class="sortable" data-col="0" onclick="sortTable(0)">Country</th>
+              <th class="sortable" data-col="1" onclick="sortTable(1)">Status</th>
               <th>Existing Laws</th>
               <th>Implementation Details</th>
-              <th>Expected</th>
+              <th class="sortable" data-col="4" onclick="sortTable(4)">Expected</th>
               <th>Verified</th>
             </tr>
           </thead>
@@ -511,5 +515,78 @@
       </div>
     </div>
   </div>
+  <script>
+    // Status sort order: draft published → partial/expected → delayed → suspended → no info
+    const statusOrder = {
+      'draft published': 0,
+      'partial': 1,
+      'draft expected': 1,
+      'draft (delayed)': 2,
+      'transposition suspended': 3,
+      'no information currently': 4
+    };
+
+    function getStatusRank(cell) {
+      const badge = cell.querySelector('.badge');
+      if (!badge) return 99;
+      const text = badge.textContent.trim().toLowerCase();
+      for (const [key, rank] of Object.entries(statusOrder)) {
+        if (text.includes(key)) return rank;
+      }
+      return 99;
+    }
+
+    let sortState = { col: -1, dir: 1 };
+
+    function sortTable(col) {
+      const table = document.querySelector('table');
+      const tbody = table.querySelector('tbody');
+      const rows = Array.from(tbody.querySelectorAll('tr'));
+      const headers = table.querySelectorAll('th.sortable');
+
+      // Toggle direction
+      if (sortState.col === col) {
+        sortState.dir *= -1;
+      } else {
+        sortState.col = col;
+        sortState.dir = 1;
+      }
+
+      // Update header indicators
+      headers.forEach(h => { h.classList.remove('sort-asc', 'sort-desc'); });
+      const activeHeader = table.querySelector(`th[data-col="${col}"]`);
+      if (activeHeader) activeHeader.classList.add(sortState.dir === 1 ? 'sort-asc' : 'sort-desc');
+
+      rows.sort((a, b) => {
+        let aVal, bVal;
+        const aCells = a.querySelectorAll('td');
+        const bCells = b.querySelectorAll('td');
+
+        if (col === 0) {
+          // Country name
+          aVal = (aCells[0]?.querySelector('.country-name')?.textContent || '').trim().toLowerCase();
+          bVal = (bCells[0]?.querySelector('.country-name')?.textContent || '').trim().toLowerCase();
+        } else if (col === 1) {
+          // Status rank
+          aVal = getStatusRank(aCells[1]);
+          bVal = getStatusRank(bCells[1]);
+          return (aVal - bVal) * sortState.dir;
+        } else if (col === 4) {
+          // Expected — put warnings/indefinite last, then sort text
+          aVal = (aCells[4]?.textContent || '').trim().toLowerCase();
+          bVal = (bCells[4]?.textContent || '').trim().toLowerCase();
+          const isLate = v => v.includes('⚠') || v.includes('indefinite') || v === '—';
+          if (isLate(aVal) && !isLate(bVal)) return 1;
+          if (!isLate(aVal) && isLate(bVal)) return -1;
+        }
+
+        if (aVal < bVal) return -1 * sortState.dir;
+        if (aVal > bVal) return 1 * sortState.dir;
+        return 0;
+      });
+
+      rows.forEach(row => tbody.appendChild(row));
+    }
+  </script>
 </body>
 </html>
