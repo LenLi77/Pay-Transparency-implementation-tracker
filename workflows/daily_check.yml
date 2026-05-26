@@ -1,4 +1,4 @@
-name: Daily Pay Transparency Update Check
+name: Daily Pay Transparency Update Checker
 
 on:
   schedule:
