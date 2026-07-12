@@ -103,7 +103,7 @@ Focus especially on: laws adopted, new drafts published, confirmed delays, polit
 infringement proceedings launched by EC."""
 
     response = client.messages.create(
-        model="claude-sonnet-4-20250514",
+        model="claude-sonnet-4-6",
         max_tokens=1000,
         messages=[{"role": "user", "content": user_prompt}],
         system=system_prompt,
@@ -186,3 +186,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+  
