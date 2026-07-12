@@ -2,20 +2,23 @@ name: Daily Pay Transparency Update Check
 
 on:
   schedule:
-    # 7:00 AM Tallinn time (EET = UTC+3 in summer, so UTC 04:00)
+    # 7:00 AM Tallinn time (EEST = UTC+3 in summer, so UTC 04:00)
     - cron: '0 4 * * *'
   workflow_dispatch: # allow manual trigger from GitHub UI
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   check-updates:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.2.2
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.11'
 
