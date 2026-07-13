@@ -75,7 +75,36 @@
       font-size: 12px; color: #92400e;
     }
     .notice-bar strong { color: #78350f; }
-    .table-wrapper { overflow-x: auto; }
+    .tabs { display: flex; gap: 0; border-bottom: 2px solid #e5e7eb; margin-bottom: 0; }
+    .tab-btn { padding: 12px 24px; background: none; border: none; font-size: 14px; font-weight: 600; color: #6b7280; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.15s; }
+    .tab-btn:hover { color: #1e3a5f; }
+    .tab-btn.active { color: #1e3a5f; border-bottom-color: #1e3a5f; }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; }
+
+    .req-wrapper { overflow-x: auto; margin-top: 0; }
+    .req-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 1400px; }
+    .req-table th { padding: 8px 10px; text-align: center; font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; background: #f9fafb; border-bottom: 2px solid #e5e7eb; border-right: 1px solid #e5e7eb; }
+    .req-table th.cat-header { background: #1e3a5f; color: white; font-size: 10px; text-align: center; }
+    .req-table th.country-col { text-align: left; min-width: 160px; position: sticky; left: 0; background: #f9fafb; z-index: 2; }
+    .req-table td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; text-align: center; vertical-align: middle; }
+    .req-table td.country-cell-req { text-align: left; position: sticky; left: 0; background: white; z-index: 1; font-weight: 500; font-size: 12px; white-space: nowrap; }
+    .req-table tr:hover td { background: #f8fafc; }
+    .req-table tr:hover td.country-cell-req { background: #f8fafc; }
+
+    .req-cell { position: relative; cursor: default; }
+    .req-cell .tooltip { display: none; position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: #1e3a5f; color: white; font-size: 11px; padding: 6px 10px; border-radius: 6px; width: 220px; text-align: left; z-index: 100; line-height: 1.4; pointer-events: none; }
+    .req-cell .tooltip::after { content: ''; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: #1e3a5f; }
+    .req-cell:hover .tooltip { display: block; }
+
+    .r-yes { color: #16a34a; font-size: 16px; }
+    .r-partial { color: #ca8a04; font-size: 16px; }
+    .r-no { color: #dc2626; font-size: 16px; }
+    .r-pending { color: #6366f1; font-size: 16px; }
+    .r-na { color: #9ca3af; font-size: 14px; }
+
+    .req-legend { display: flex; gap: 20px; padding: 12px 16px; background: #f9fafb; border-top: 1px solid #e5e7eb; font-size: 12px; flex-wrap: wrap; }
+    .req-legend span { display: flex; align-items: center; gap: 6px; color: #374151; }
     table { width: 100%; border-collapse: collapse; min-width: 1100px; }
     th {
       padding: 12px 12px; text-align: left; font-size: 10px; font-weight: 600;
@@ -197,6 +226,12 @@
         setInterval(updateCountdown, 3600000);
       </script>
       
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('status')">📊 Implementation Status</button>
+        <button class="tab-btn" onclick="switchTab('requirements')">📋 Requirements by Country</button>
+      </div>
+
+      <div id="tab-status" class="tab-content active">
       <div class="table-wrapper">
         <table>
           <thead>
@@ -434,6 +469,482 @@
           </tbody>
         </table>
       </div>
+      </div><!-- end tab-status -->
+
+      <div id="tab-requirements" class="tab-content">
+      <div class="req-wrapper">
+        <table class="req-table">
+          <thead>
+            <tr>
+              <th class="country-col" rowspan="2">Country</th>
+              <th class="cat-header" colspan="3">1. Pre-employment</th>
+              <th class="cat-header" colspan="2">2. Worker Rights</th>
+              <th class="cat-header" colspan="2">3. Pay Structure</th>
+              <th class="cat-header" colspan="2">4. Reporting</th>
+              <th class="cat-header" colspan="1">5. Pay Audit</th>
+              <th class="cat-header" colspan="2">6. Enforcement</th>
+            </tr>
+            <tr>
+              <th>Salary in job ad / before interview</th>
+              <th>Salary history ban</th>
+              <th>Transparency obligations in collective agreements</th>
+              <th>Right to pay info (colleagues' avg)</th>
+              <th>Pay secrecy clause ban</th>
+              <th>Pay structure required</th>
+              <th>Criteria available to employees</th>
+              <th>Reporting 250+ (annual)</th>
+              <th>Reporting 100–249 (triennial)</th>
+              <th>Pay audit if 5%+ unexplained gap</th>
+              <th>Burden of proof reversed</th>
+              <th>Sanctions defined</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- SLOVAKIA -->
+            <tr>
+              <td class="country-cell-req">🇸🇰 Slovakia</td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Equal Pay Act in force 7 June 2026. Salary or range required before interview.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Asking about previous salary prohibited.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Collective agreement transparency requirements included.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Employees may request pay info from employer at any time.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Pay secrecy clauses prohibited.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Employers must establish compliant pay structures by 31 July 2026.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Pay criteria must be accessible to employees.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Annual pay gap reporting for 250+ employees. First report due 2027.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Triennial reporting for 100–249 employees.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Joint pay assessment required if 5%+ unexplained gap persists after 6 months.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Burden of proof reversed in pay discrimination cases.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Fines €4,000–€8,000 for non-compliance.</div></td>
+            </tr>
+            <!-- ITALY -->
+            <tr>
+              <td class="country-cell-req">🇮🇹 Italy</td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Legislative Decree 96/2026. Specific pay or range required in job ads or before interview.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Salary history ban in force from 7 June 2026.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">National collective bargaining agreements used as primary reference for equal work assessment.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Right to pay info available but limited to 1 request per 12 months. Employer has 60 days to respond.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Pay secrecy clauses prohibited.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Pay structure must be based on objective, gender-neutral criteria.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Criteria must be accessible to employees and employee representatives.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Annual pay gap reporting for 250+ employees.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Triennial reporting for 100–249 employees.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Pay audit required if 5%+ unexplained gap. No criminal sanctions in Italian implementation.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Burden of proof not formally reversed in Italian decree — employer encouraged to justify but no explicit shift.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Administrative penalties under Equal Opportunities Code apply.</div></td>
+            </tr>
+            <!-- LITHUANIA -->
+            <tr>
+              <td class="country-cell-req">🇱🇹 Lithuania <span style="font-size:10px;background:#dbeafe;color:#1e40af;padding:1px 5px;border-radius:3px;margin-left:4px;">BALTIC</span></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Law XV-969, in force 7 June 2026. Salary ranges required in job ads.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Salary history ban in force from 7 June 2026.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Collective agreement transparency included.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Right to pay information delayed to 1 January 2027 to allow technical preparation.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Pay secrecy clauses prohibited from 7 June 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Pay structure/job classification requirements delayed to 1 January 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Criteria availability delayed to 1 January 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Pay gap reporting via Sodra delayed to 1 January 2027. SoDra will calculate gender pay gap indicators directly from payroll data.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Triennial reporting for 100–249 also delayed to 1 January 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Pay audit requirements delayed to 1 January 2027.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Burden of proof reversed in pay discrimination cases from 7 June 2026.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Fines up to €6,000.</div></td>
+            </tr>
+            <!-- MALTA -->
+            <tr>
+              <td class="country-cell-req">🇲🇹 Malta</td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Legal Notice 173/2026. Salary range required before interview, in force 7 June 2026.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Salary history ban in force 7 June 2026.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Collective agreement transparency requirements included.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Right to pay info limited to 1 request per year (more restrictive than Directive's "at any time").</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Pay secrecy clauses prohibited.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Worker categorisation for equal value work required.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Pay progression criteria must be accessible.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Annual pay gap reporting for 250+ employees.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Triennial reporting for 100–249 employees.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Pay audit if 5%+ unexplained gap.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Burden of proof reversed.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Sanctions defined under implementing regulations.</div></td>
+            </tr>
+            <!-- ESTONIA -->
+            <tr>
+              <td class="country-cell-req">🇪🇪 Estonia <span style="font-size:10px;background:#dbeafe;color:#1e40af;padding:1px 5px;border-radius:3px;margin-left:4px;">BALTIC</span></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Employment Contracts Act amendment in force 13 July 2026. Salary or range required in writing before interview.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Asking candidates about previous salary prohibited from 13 July 2026.</div></td>
+              <td class="req-cell"><span class="r-na">—</span><div class="tooltip">Not addressed in partial transposition.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Not transposed. Government wishes to discuss simplification with EC before implementing this requirement.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Employers may not prevent employees from disclosing their own salary, in force 13 July 2026.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Not transposed. Pay structure requirements not included in partial transposition.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Not transposed. Criteria availability requirements not included.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Not transposed. Reporting obligations for 250+ not included in partial transposition.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Not transposed. Triennial reporting for 100–249 not included.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Not transposed. Pay audit requirement not included.</div></td>
+              <td class="req-cell"><span class="r-na">—</span><div class="tooltip">Not addressed in partial transposition.</div></td>
+              <td class="req-cell"><span class="r-na">—</span><div class="tooltip">No specific sanctions defined for the untransposed elements.</div></td>
+            </tr>
+            <!-- LATVIA -->
+            <tr>
+              <td class="country-cell-req">🇱🇻 Latvia <span style="font-size:10px;background:#dbeafe;color:#1e40af;padding:1px 5px;border-radius:3px;margin-left:4px;">BALTIC</span></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Draft published March 2026. Stricter than Directive: requires specific gross pay amount, not just a range. Awaiting parliamentary adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Draft includes salary history ban. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Right to pay info included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Salary disclosure obligation in job ads already in force since 2018. Pay secrecy clauses addressed in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+            </tr>
+            <!-- CYPRUS -->
+            <tr>
+              <td class="country-cell-req">🇨🇾 Cyprus</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Comprehensive draft published Jan 2026. Goes beyond Directive minimums. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Enhanced job evaluation provisions beyond Directive minimum.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Enhanced job evaluation provisions included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Criminal liability for violations included — goes beyond Directive minimum.</div></td>
+            </tr>
+            <!-- ROMANIA -->
+            <tr>
+              <td class="country-cell-req">🇷🇴 Romania</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Draft law published March 2026, consultation closed April 8. Awaiting parliamentary adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Right to info included. Tighter deadline: employer must respond within 30 days (vs 60 days in Directive).</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Awaiting adoption.</div></td>
+            </tr>
+            <!-- NETHERLANDS -->
+            <tr>
+              <td class="country-cell-req">🇳🇱 Netherlands</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Draft targets 1 Jan 2027. Council of State consulted Jan 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Works councils gain approval rights over transparency methods — goes beyond Directive minimum.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets 1 Jan 2027.</div></td>
+            </tr>
+            <!-- DENMARK -->
+            <tr>
+              <td class="country-cell-req">🇩🇰 Denmark</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Draft published Feb 2026. Targets Jan 2027. Parliamentary elections March 2026 added uncertainty.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. New Danish Labour Market Institute for Equal Pay to be established.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+            </tr>
+            <!-- CZECHIA -->
+            <tr>
+              <td class="country-cell-req">🇨🇿 Czechia</td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Pay secrecy ban in force June 2025. Draft amendment targets Jan 2027 for full pre-employment requirements.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Minimalist approach. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Pay secrecy ban already in force since June 2025.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Reporting phased from 2028. Targets Jan 2027 for core law.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Reporting phased from 2028.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+            </tr>
+            <!-- FINLAND -->
+            <tr>
+              <td class="country-cell-req">🇫🇮 Finland</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Government proposal submitted to Eduskunta 9 July 2026. Entry into force 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in government proposal. Entry into force 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in proposal. Minimum implementation approach.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in proposal. Entry into force 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in proposal. Entry into force 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Pay progression criteria required for 50+ employees. Entry into force 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Criteria availability required for 50+ employees. Entry into force 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Annual reporting for 250+. First reports June 2027. Via Incomes Register (Tulorekisteri).</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Triennial reporting for 100–249. Statistics Finland assists with analysis.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Pay audit included. Entry into force 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in proposal. Equality Ombudsman given expanded powers. Entry into force 1 Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Fines €5,000–€80,000. Entry into force 1 Jan 2027.</div></td>
+            </tr>
+            <!-- POLAND -->
+            <tr>
+              <td class="country-cell-req">🇵🇱 Poland</td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Labour Code amendment Dec 2025: salary info and history ban in force. Full requirements target Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Salary history ban already in force since Dec 2025 Labour Code amendment.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027 after 6-month grace period.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Fixed annual notification deadline (31 March) added — stricter than Directive.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Pay secrecy clauses addressed in Dec 2025 amendment. Full provisions target Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan–Mar 2027 after 6-month grace period.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan–Mar 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan–Mar 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan–Mar 2027.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets Jan–Mar 2027.</div></td>
+            </tr>
+            <!-- FRANCE -->
+            <tr>
+              <td class="country-cell-req">🇫🇷 France</td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Gender Equality Index already provides partial pay transparency. Draft tabled in Parliament July 2026 for full implementation. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft tabled in Parliament July 2026. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+            </tr>
+            <!-- IRELAND -->
+            <tr>
+              <td class="country-cell-req">🇮🇪 Ireland</td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Equality Bill 2024: salary history ban and ranges in job ads already in force. Full implementation phased — employers not penalised for incomplete elements in June 2026.</div></td>
+              <td class="req-cell"><span class="r-yes">✅</span><div class="tooltip">Salary history ban already in force under Equality Bill 2024.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Phased implementation. Employer workshops planned April–July 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in phased plan. Timeline unclear.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in phased plan.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in phased plan.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in phased plan.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in phased plan.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in phased plan.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in phased plan.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in phased plan.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in phased plan.</div></td>
+            </tr>
+            <!-- BELGIUM -->
+            <tr>
+              <td class="country-cell-req">🇧🇪 Belgium</td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Fédération Wallonie-Bruxelles in force Jan 2025 (public sector). Flemish public sector in force June 2026. Federal private sector: draft not yet published, 6-month extension requested.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Partially in force for public sector. Federal private sector extension requested.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Partially in force for public sector only.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Not yet in force for private sector. Federal draft pending.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Existing reporting obligations for 50+ already in force. Pay secrecy addressed partially.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Federal draft pending.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Federal draft pending.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Existing gender pay reporting for 50+ already in force. Full Directive requirements pending federal draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Federal draft pending.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Federal draft pending.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Federal draft pending.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Federal draft pending.</div></td>
+            </tr>
+            <!-- SPAIN -->
+            <tr>
+              <td class="country-cell-req">🇪🇸 Spain</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Public consultation closed May 2026. Formal draft to follow. Targets H2 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in consultation. Targets H2 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in consultation.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in consultation.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in consultation.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Pay register and gender pay audit already required for 50+ employees under existing law. Full Directive requirements pending.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Pay register criteria already partially available under existing law.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Existing pay register covers some ground but Directive reporting requirements pending.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in consultation.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Gender pay audit already required under existing law for some employers. Full Directive provisions pending.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in consultation.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in consultation.</div></td>
+            </tr>
+            <!-- GERMANY -->
+            <tr>
+              <td class="country-cell-req">🇩🇪 Germany</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published. Commission report Nov 2025 recommended reducing bureaucracy. Targets H2 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published. Targets H2 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Existing Pay Transparency Act (2017) gives employees at 200+ companies right to info about comparable pay. Full Directive requirements pending.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">No draft published.</div></td>
+            </tr>
+            <!-- SWEDEN -->
+            <tr>
+              <td class="country-cell-req">🇸🇪 Sweden</td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Government announced 26 March 2026 it will not submit implementing bill to Riksdag. Demanding EU-level renegotiation.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Transposition suspended. Existing Discrimination Act remains in force.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Existing Discrimination Act includes detailed pay analysis regime which provides some equivalent coverage.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Transposition suspended.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Existing Discrimination Act provides equivalent coverage for some pay transparency requirements.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Existing annual pay analysis under Discrimination Act covers some requirements but does not fully meet Directive standard.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Existing Discrimination Act requires pay criteria to be available. Does not fully meet Directive standard.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Transposition suspended. No Directive-compliant reporting.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Transposition suspended.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">Transposition suspended.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Existing Discrimination Act provides some equivalent protection.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Existing sanctions under Discrimination Act apply but do not fully meet Directive requirements.</div></td>
+            </tr>
+            <!-- GREECE -->
+            <tr>
+              <td class="country-cell-req">🇬🇷 Greece</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Draft published 3 June 2026. Parliament in summer recess. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Targets autumn 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Greek Ombudsman given central enforcement role.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">First cycle: employers with 150+ report on data from law entry into force to 31 Dec 2026.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+            </tr>
+            <!-- BULGARIA -->
+            <tr>
+              <td class="country-cell-req">🇧🇬 Bulgaria</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Draft published May 2026. Targets H2 2026 after parliamentary adoption.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. CPD (Commission for Protection against Discrimination) as central enforcement body.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. Implemented via Anti-Discrimination Act amendments.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft. 4-year data retention requirement — goes beyond Directive minimum.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Included in draft.</div></td>
+            </tr>
+            <!-- CROATIA -->
+            <tr>
+              <td class="country-cell-req">🇭🇷 Croatia</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Draft proposals expected. Implementation via Labour Act amendments.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+            </tr>
+            <!-- SLOVENIA -->
+            <tr>
+              <td class="country-cell-req">🇸🇮 Slovenia</td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Ministry working group established. Draft expected.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+              <td class="req-cell"><span class="r-pending">🔄</span><div class="tooltip">Expected in draft.</div></td>
+            </tr>
+            <!-- MALTA -->
+            <!-- AUSTRIA -->
+            <tr>
+              <td class="country-cell-req">🇦🇹 Austria</td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published as of July 2026. Specialist committee report due Feb 2026 not published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-partial">⚠️</span><div class="tooltip">Existing income reporting for 30+ employees already in force, but does not meet Directive standard.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+            </tr>
+            <!-- HUNGARY -->
+            <tr>
+              <td class="country-cell-req">🇭🇺 Hungary</td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published. Preliminary consultations ongoing.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+            </tr>
+            <!-- PORTUGAL -->
+            <tr>
+              <td class="country-cell-req">🇵🇹 Portugal</td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published as of July 2026.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+            </tr>
+            <!-- LUXEMBOURG -->
+            <tr>
+              <td class="country-cell-req">🇱🇺 Luxembourg</td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published as of July 2026. Draft bill expected end of March 2026 did not materialise.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+              <td class="req-cell"><span class="r-no">❌</span><div class="tooltip">No draft published.</div></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="req-legend">
+        <span><span class="r-yes">✅</span> In force</span>
+        <span><span class="r-partial">⚠️</span> Partial / existing law covers some ground</span>
+        <span><span class="r-pending">🔄</span> In draft or confirmed coming</span>
+        <span><span class="r-no">❌</span> Not transposed / suspended</span>
+        <span><span class="r-na">—</span> Not applicable / not addressed</span>
+        <span style="color:#6b7280; margin-left: auto;">Hover over any cell for details</span>
+      </div>
+      </div><!-- end tab-requirements -->
       
       <div class="footer">
         <div class="footer-title">Key Requirements from 7 June 2026</div>
@@ -545,6 +1056,13 @@
     }
 
     let sortState = { col: -1, dir: 1 };
+
+    function switchTab(name) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      document.getElementById('tab-' + name).classList.add('active');
+      event.target.classList.add('active');
+    }
 
     function sortTable(col) {
       const table = document.querySelector('table');
