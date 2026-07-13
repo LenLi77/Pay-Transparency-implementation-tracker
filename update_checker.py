@@ -79,7 +79,10 @@ MAX_PAUSE_TURN_CONTINUATIONS = 5
 
 def get_updates_from_claude() -> str:
     """Have Claude search the web and identify meaningful updates."""
-    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
+    # A server-side web_search turn can take several minutes; stream (below) to
+    # keep the connection alive, and cap retries so a genuinely stuck request
+    # fails fast instead of burning 3 × 10 min on timeouts.
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY, timeout=900.0, max_retries=1)
 
     today = date.today().strftime("%d %B %Y")
     current_status = build_current_status()
@@ -113,18 +116,21 @@ that are NOT already reflected in the current tracker status.
 Focus especially on: laws adopted, new drafts published, confirmed delays, political decisions,
 infringement proceedings launched by EC."""
 
-    tools = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 8}]
+    tools = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 6}]
     messages = [{"role": "user", "content": user_prompt}]
 
-    # Server-side search runs in a loop; pause_turn means "re-send to continue"
+    # Stream so the long server-side search doesn't hit the request timeout.
+    # pause_turn means the server tool loop hit its cap — re-send to continue.
+    response = None
     for _ in range(MAX_PAUSE_TURN_CONTINUATIONS):
-        response = client.messages.create(
+        with client.messages.stream(
             model="claude-sonnet-4-6",
             max_tokens=4000,
             messages=messages,
             system=system_prompt,
             tools=tools,
-        )
+        ) as stream:
+            response = stream.get_final_message()
         if response.stop_reason != "pause_turn":
             break
         messages = [
