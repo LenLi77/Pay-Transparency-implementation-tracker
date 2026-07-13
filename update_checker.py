@@ -30,8 +30,10 @@ def _strip_tags(html: str) -> str:
 
 
 def build_current_status() -> str:
-    """Read the current per-country status straight from the tracker's index.html,
-    so the baseline given to Claude is always in sync with the published tracker."""
+    """Read the current status from the tracker's index.html, so the baseline
+    given to Claude stays in sync with the published tracker. Country data lives
+    in the COUNTRIES JS array (the single source of truth); the 'last updated'
+    line and context notices are still static HTML."""
     html = TRACKER_HTML.read_text(encoding="utf-8")
 
     lines = []
@@ -45,18 +47,24 @@ def build_current_status() -> str:
     for notice in re.findall(r'class="notice-bar"[^>]*>(.*?)</div>', html, re.DOTALL):
         lines.append(f"CONTEXT: {_strip_tags(notice)}")
 
-    # Per-country rows from the Implementation Status tab
-    status_tab = html.split('id="tab-status"', 1)[1].split("end tab-status", 1)[0]
-    for row in re.findall(r"<tr[^>]*>(.*?)</tr>", status_tab, re.DOTALL):
-        cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL)
-        if len(cells) < 6:
-            continue  # header row or malformed
-        name = _strip_tags(re.search(r'class="country-name">(.*?)</div>', cells[0], re.DOTALL).group(1))
-        name = name.replace("BALTIC", "").strip()
-        status = _strip_tags(cells[1])
-        details = _strip_tags(cells[3])
-        expected = _strip_tags(cells[4])
-        lines.append(f"- {name} | Status: {status} | Expected: {expected} | Known details: {details}")
+    # Country rows are rendered client-side from the COUNTRIES array — parse it.
+    array = re.search(r"const COUNTRIES = \[(.*?)\n    \];", html, re.DOTALL)
+    if not array:
+        raise RuntimeError(f"Could not find COUNTRIES array in {TRACKER_HTML}")
+
+    # Each object closes with a 6-space-indented "}," — split on that boundary.
+    for chunk in array.group(1).split("\n      },"):
+        name = re.search(r"name:\s*'([^']+)'", chunk)
+        status = re.search(r"status:\s*'([^']*)'", chunk)
+        if not (name and status):
+            continue  # trailing/empty chunk
+        expected = re.search(r"expected:\s*'([^']*)'", chunk)
+        details = re.search(r"details:\s*`([^`]*)`", chunk)
+        detail_text = f" | Known details: {details.group(1)}" if details else ""
+        lines.append(
+            f"- {name.group(1)} | Status: {status.group(1)} | "
+            f"Expected: {expected.group(1) if expected else '—'}{detail_text}"
+        )
 
     country_count = sum(1 for line in lines if line.startswith("- "))
     if country_count == 0:
