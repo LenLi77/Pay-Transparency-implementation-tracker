@@ -82,11 +82,14 @@
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
-    .req-wrapper { overflow-x: auto; margin-top: 0; }
-    .req-table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 1400px; }
+    .req-wrapper { overflow: auto; max-height: 85vh; margin-top: 0; }
+    .req-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 12px; min-width: 1400px; }
     .req-table th { padding: 8px 10px; text-align: center; font-size: 10px; font-weight: 600; color: #6b7280; text-transform: uppercase; letter-spacing: 0.04em; background: #f9fafb; border-bottom: 2px solid #e5e7eb; border-right: 1px solid #e5e7eb; }
+    .req-table thead th { position: sticky; top: 0; z-index: 3; }
+    .req-table thead tr:first-child th { height: 34px; }
+    .req-table thead tr:nth-child(2) th { top: 34px; }
     .req-table th.cat-header { background: #1e3a5f; color: white; font-size: 10px; text-align: center; }
-    .req-table th.country-col { text-align: left; min-width: 160px; position: sticky; left: 0; background: #f9fafb; z-index: 2; }
+    .req-table th.country-col { text-align: left; min-width: 160px; position: sticky; left: 0; background: #f9fafb; z-index: 4; }
     .req-table td { padding: 7px 10px; border-bottom: 1px solid #f1f5f9; border-right: 1px solid #f1f5f9; text-align: center; vertical-align: middle; }
     .req-table td.country-cell-req { text-align: left; position: sticky; left: 0; background: white; z-index: 1; font-weight: 500; font-size: 12px; white-space: nowrap; }
     .req-table tr:hover td { background: #f8fafc; }
