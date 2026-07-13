@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
 """
 EU Pay Transparency Directive - Daily Update Checker
-Searches for news, summarises changes via Claude API, sends email to Ellen.
+Searches for news via Claude's web_search tool, summarises changes, sends email to Ellen.
 """
 
 import os
+import re
 import smtplib
-import json
 from datetime import date
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from pathlib import Path
 import anthropic
-import urllib.request
-import urllib.parse
 
 # ── Configuration ────────────────────────────────────────────────────────────
 ANTHROPIC_API_KEY = os.environ["ANTHROPIC_API_KEY"]
@@ -21,65 +20,76 @@ GMAIL_APP_PASSWORD = os.environ["GMAIL_APP_PASSWORD"] # Gmail App Password (not 
 EMAIL_TO          = "ellen.liigus@gmail.com"
 
 TRACKER_URL = "https://pay-transparency-implementation-tra.vercel.app/"
+TRACKER_HTML = Path(__file__).with_name("index.html")
 
-# Countries we track and their current status (update this when tracker changes)
-CURRENT_STATUS = """
-LAW ADOPTED (2): Slovakia, Italy
-DRAFT PUBLISHED (5): Lithuania, Finland, Cyprus, Romania, Latvia
-PARTIAL / DELAYED (13): Netherlands (Jan 2027), Sweden (suspended/renegotiating),
-  Denmark (Jan 2027, elections uncertainty), France (Sep 2026), Ireland (phased),
-  Czechia (Jan 2027), Belgium (partial), Poland (Jan 2027), Spain (H2 2026),
-  Croatia (expected), Slovenia (expected), Bulgaria (deadline missed),
-  Germany (H2 2026)
-NO INFO / SUSPENDED (7): Estonia (suspended), Austria, Greece, Hungary,
-  Portugal, Luxembourg, Malta (partial only, employer association requested postponement)
 
-KEY CONTEXT: June 7 2026 is the transposition deadline. EC confirmed no postponement.
-Estonia and Sweden are actively refusing to transpose. Most countries will miss the deadline.
-Last tracker update: 26 May 2026.
+def _strip_tags(html: str) -> str:
+    """Collapse an HTML fragment to plain text."""
+    text = re.sub(r"<[^>]+>", " ", html)
+    return re.sub(r"\s+", " ", text).strip()
+
+
+def build_current_status() -> str:
+    """Read the current per-country status straight from the tracker's index.html,
+    so the baseline given to Claude is always in sync with the published tracker."""
+    html = TRACKER_HTML.read_text(encoding="utf-8")
+
+    lines = []
+
+    # "Last updated" footer line
+    updated = re.search(r'class="updated">(.*?)</div>', html, re.DOTALL)
+    if updated:
+        lines.append(_strip_tags(updated.group(1)))
+
+    # Notice bars carry key context (deadline, infringement outlook)
+    for notice in re.findall(r'class="notice-bar"[^>]*>(.*?)</div>', html, re.DOTALL):
+        lines.append(f"CONTEXT: {_strip_tags(notice)}")
+
+    # Per-country rows from the Implementation Status tab
+    status_tab = html.split('id="tab-status"', 1)[1].split("end tab-status", 1)[0]
+    for row in re.findall(r"<tr[^>]*>(.*?)</tr>", status_tab, re.DOTALL):
+        cells = re.findall(r"<td[^>]*>(.*?)</td>", row, re.DOTALL)
+        if len(cells) < 6:
+            continue  # header row or malformed
+        name = _strip_tags(re.search(r'class="country-name">(.*?)</div>', cells[0], re.DOTALL).group(1))
+        name = name.replace("BALTIC", "").strip()
+        status = _strip_tags(cells[1])
+        details = _strip_tags(cells[3])
+        expected = _strip_tags(cells[4])
+        lines.append(f"- {name} | Status: {status} | Expected: {expected} | Known details: {details}")
+
+    country_count = sum(1 for line in lines if line.startswith("- "))
+    if country_count == 0:
+        raise RuntimeError(f"Could not parse any country rows from {TRACKER_HTML}")
+
+    return "\n".join(lines)
+
+# Topics Claude should search for (guidance, not literal queries)
+SEARCH_TOPICS = """
+- EU pay transparency directive transposition status (deadline was 7 June 2026)
+- Estonia and Sweden refusal to transpose / EC infringement proceedings
+- Germany (Lohntransparenzrichtlinie) draft law progress
+- France (transparence salariale) draft law progress
+- Lithuania, Finland, Cyprus, Romania, Latvia adoption progress
+- Malta, Austria, Portugal, Hungary, Greece, Luxembourg, Slovenia, Croatia transposition news
 """
 
-# Search queries to run
-SEARCH_QUERIES = [
-    "EU pay transparency directive transposition June 2026",
-    "EU pay transparency directive Estonia Sweden infringement proceedings",
-    "EU Lohntransparenzrichtlinie Germany draft law June 2026",
-    "directive transparence salariale France loi juin 2026",
-    "EU pay transparency Lithuania Finland Cyprus Romania adopted law",
-    "Malta Austria Portugal Hungary Greece Luxembourg pay transparency directive 2026",
-]
+MAX_PAUSE_TURN_CONTINUATIONS = 5
 
 
-def search_web(query: str) -> str:
-    """Simple DuckDuckGo search via their API."""
-    try:
-        params = urllib.parse.urlencode({"q": query, "format": "json", "no_html": "1", "skip_disambig": "1"})
-        url = f"https://api.duckduckgo.com/?{params}"
-        req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-        with urllib.request.urlopen(req, timeout=10) as response:
-            data = json.loads(response.read().decode())
-        results = []
-        # Abstract
-        if data.get("AbstractText"):
-            results.append(f"[Abstract] {data['AbstractText'][:500]}")
-        # Related topics
-        for topic in data.get("RelatedTopics", [])[:5]:
-            if isinstance(topic, dict) and topic.get("Text"):
-                results.append(f"- {topic['Text'][:300]}")
-        return "\n".join(results) if results else "No results found."
-    except Exception as e:
-        return f"Search error: {e}"
-
-
-def get_updates_from_claude(search_results: str) -> str:
-    """Ask Claude to analyse search results and identify meaningful updates."""
+def get_updates_from_claude() -> str:
+    """Have Claude search the web and identify meaningful updates."""
     client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY)
 
     today = date.today().strftime("%d %B %Y")
+    current_status = build_current_status()
 
     system_prompt = """You are an expert analyst tracking EU employment law.
-Your task: review search results and identify ONLY genuinely new developments
+Your task: search the web for today's news and identify ONLY genuinely new developments
 for the EU Pay Transparency Directive tracker.
+
+Use the web_search tool to find recent news. Prefer official government sources,
+EC statements, and reputable law firm trackers. Search in local languages where useful.
 
 Be concise and factual. Flag only real changes — new drafts published,
 laws adopted, confirmed delays, political decisions. Ignore duplicate news
@@ -87,28 +97,42 @@ and anything already in the current status summary provided.
 
 Format your response as a clean email section with:
 1. A brief verdict (updates found / no significant updates)
-2. Country-by-country bullet points for any changes
+2. Country-by-country bullet points for any changes, with source links
 3. A recommendation: update tracker now / wait for more info"""
 
     user_prompt = f"""Today is {today}.
 
-CURRENT TRACKER STATUS:
-{CURRENT_STATUS}
+CURRENT TRACKER STATUS (parsed from the live tracker page):
+{current_status}
 
-SEARCH RESULTS FROM TODAY:
-{search_results}
+TOPICS TO SEARCH FOR:
+{SEARCH_TOPICS}
 
-Please identify any meaningful updates that are NOT already reflected in the current tracker status.
+Search the web for recent news on these topics, then identify any meaningful updates
+that are NOT already reflected in the current tracker status.
 Focus especially on: laws adopted, new drafts published, confirmed delays, political decisions,
 infringement proceedings launched by EC."""
 
-    response = client.messages.create(
-        model="claude-sonnet-4-6",
-        max_tokens=1000,
-        messages=[{"role": "user", "content": user_prompt}],
-        system=system_prompt,
-    )
-    return response.content[0].text
+    tools = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 8}]
+    messages = [{"role": "user", "content": user_prompt}]
+
+    # Server-side search runs in a loop; pause_turn means "re-send to continue"
+    for _ in range(MAX_PAUSE_TURN_CONTINUATIONS):
+        response = client.messages.create(
+            model="claude-sonnet-4-6",
+            max_tokens=4000,
+            messages=messages,
+            system=system_prompt,
+            tools=tools,
+        )
+        if response.stop_reason != "pause_turn":
+            break
+        messages = [
+            {"role": "user", "content": user_prompt},
+            {"role": "assistant", "content": response.content},
+        ]
+
+    return "\n".join(block.text for block in response.content if block.type == "text")
 
 
 def send_email(subject: str, body_html: str, body_text: str):
@@ -163,22 +187,13 @@ View tracker: {TRACKER_URL}
 def main():
     print("Starting EU Pay Transparency update check...")
 
-    # 1. Run searches
-    all_results = []
-    for query in SEARCH_QUERIES:
-        print(f"Searching: {query}")
-        result = search_web(query)
-        all_results.append(f"QUERY: {query}\n{result}\n")
-
-    combined_results = "\n---\n".join(all_results)
-
-    # 2. Analyse with Claude
-    print("Analysing results with Claude...")
-    analysis = get_updates_from_claude(combined_results)
+    # 1. Search + analyse in a single Claude call (server-side web search)
+    print("Searching and analysing with Claude...")
+    analysis = get_updates_from_claude()
     print("Analysis complete.")
     print(analysis)
 
-    # 3. Send email
+    # 2. Send email
     subject, html, plain = build_email(analysis)
     send_email(subject, html, plain)
     print("Done.")
@@ -186,4 +201,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-  
