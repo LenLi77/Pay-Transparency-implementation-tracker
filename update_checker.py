@@ -146,6 +146,13 @@ infringement proceedings launched by EC."""
             system=system_blocks,
             tools=tools,
         ) as stream:
+            # Print live progress so the CI log shows the run is working, not hung,
+            # during the minutes the server spends searching.
+            for event in stream:
+                if event.type == "content_block_start":
+                    block = getattr(event, "content_block", None)
+                    if block is not None and getattr(block, "type", "") == "server_tool_use":
+                        print("  ...running a web search", flush=True)
             response = stream.get_final_message()
 
         u = response.usage
