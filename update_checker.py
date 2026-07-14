@@ -89,10 +89,10 @@ MAX_PAUSE_TURN_CONTINUATIONS = 3
 
 def get_updates_from_claude() -> str:
     """Have Claude search the web and identify meaningful updates."""
-    # A server-side web_search turn can take several minutes; stream (below) to
-    # keep the connection alive, and cap retries so a genuinely stuck request
-    # fails fast instead of burning 3 × 10 min on timeouts.
-    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY, timeout=900.0, max_retries=1)
+    # Stream (below) keeps the connection alive during the search. Basic web
+    # search turns are fast, so allow a few retries to ride out transient
+    # overloaded_error (529) responses from the API.
+    client = anthropic.Anthropic(api_key=ANTHROPIC_API_KEY, timeout=900.0, max_retries=3)
 
     today = date.today().strftime("%d %B %Y")
     current_status = build_current_status()
@@ -126,10 +126,11 @@ that are NOT already reflected in the current tracker status.
 Focus especially on: laws adopted, new drafts published, confirmed delays, political decisions,
 infringement proceedings launched by EC."""
 
-    # max_uses kept low: each search also runs dynamic-filtering code execution,
-    # and going past the server's ~10-iteration cap triggers an expensive
-    # pause_turn re-send. 4 searches stays comfortably under it.
-    tools = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 4}]
+    # Basic web search (snippets only). The dynamic-filtering variant
+    # (web_search_20260209) fetches and processes full pages via server-side
+    # code execution, which cost ~2M tokens and repeatedly hit pause_turn. For a
+    # "did anything change" news scan, snippets + URLs are enough and far cheaper.
+    tools = [{"type": "web_search_20250305", "name": "web_search", "max_uses": 5}]
     # Cache the (stable) system prompt so it isn't re-billed on every continuation.
     system_blocks = [{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}]
     messages = [{"role": "user", "content": user_prompt}]
