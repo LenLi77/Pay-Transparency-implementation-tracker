@@ -2,8 +2,8 @@ name: Pay Transparency Update Check (Mon/Wed/Fri)
 
 on:
   schedule:
-    # Mon, Wed, Fri at 7:00 AM Tallinn time (EEST = UTC+3 in summer, so UTC 04:00)
-    - cron: '0 4 * * 1,3,5'
+    # Mon, Wed, Fri at 10:00 Tallinn time (EEST = UTC+3 in summer, so UTC 07:00)
+    - cron: '0 7 * * 1,3,5'
   workflow_dispatch: # allow manual trigger from GitHub UI
 
 env:
