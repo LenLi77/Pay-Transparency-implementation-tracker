@@ -82,7 +82,9 @@ SEARCH_TOPICS = """
 - Malta, Austria, Portugal, Hungary, Greece, Luxembourg, Slovenia, Croatia transposition news
 """
 
-MAX_PAUSE_TURN_CONTINUATIONS = 5
+# Each pause_turn continuation re-sends the whole accumulated turn (incl. fetched
+# web content) as fresh input, so keep this low — it is a token-cost multiplier.
+MAX_PAUSE_TURN_CONTINUATIONS = 3
 
 
 def get_updates_from_claude() -> str:
@@ -124,27 +126,49 @@ that are NOT already reflected in the current tracker status.
 Focus especially on: laws adopted, new drafts published, confirmed delays, political decisions,
 infringement proceedings launched by EC."""
 
-    tools = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 6}]
+    # max_uses kept low: each search also runs dynamic-filtering code execution,
+    # and going past the server's ~10-iteration cap triggers an expensive
+    # pause_turn re-send. 4 searches stays comfortably under it.
+    tools = [{"type": "web_search_20260209", "name": "web_search", "max_uses": 4}]
+    # Cache the (stable) system prompt so it isn't re-billed on every continuation.
+    system_blocks = [{"type": "text", "text": system_prompt, "cache_control": {"type": "ephemeral"}}]
     messages = [{"role": "user", "content": user_prompt}]
 
     # Stream so the long server-side search doesn't hit the request timeout.
     # pause_turn means the server tool loop hit its cap — re-send to continue.
+    totals = {"input": 0, "output": 0, "cache_read": 0, "cache_write": 0, "searches": 0}
     response = None
     for _ in range(MAX_PAUSE_TURN_CONTINUATIONS):
         with client.messages.stream(
             model="claude-sonnet-4-6",
             max_tokens=4000,
             messages=messages,
-            system=system_prompt,
+            system=system_blocks,
             tools=tools,
         ) as stream:
             response = stream.get_final_message()
+
+        u = response.usage
+        totals["input"] += u.input_tokens
+        totals["output"] += u.output_tokens
+        totals["cache_read"] += getattr(u, "cache_read_input_tokens", 0) or 0
+        totals["cache_write"] += getattr(u, "cache_creation_input_tokens", 0) or 0
+        server_use = getattr(u, "server_tool_use", None)
+        if server_use:
+            totals["searches"] += getattr(server_use, "web_search_requests", 0) or 0
+
         if response.stop_reason != "pause_turn":
             break
         messages = [
             {"role": "user", "content": user_prompt},
             {"role": "assistant", "content": response.content},
         ]
+
+    print(
+        f"Token usage — input {totals['input']:,} "
+        f"(cache read {totals['cache_read']:,}, write {totals['cache_write']:,}), "
+        f"output {totals['output']:,}, web searches {totals['searches']}"
+    )
 
     return "\n".join(block.text for block in response.content if block.type == "text")
 
