@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-EU Pay Transparency Directive - Daily Update Checker
+EU Pay Transparency Directive - Weekly Update Checker
 Searches for news via Claude's web_search tool, summarises changes, sends email to Ellen.
 """
 
@@ -201,13 +201,13 @@ def send_email(subject: str, body_html: str, body_text: str):
 def build_email(analysis: str) -> tuple[str, str]:
     """Build HTML and plain text email bodies."""
     today = date.today().strftime("%d %B %Y")
-    subject = f"🇪🇺 Pay Transparency Tracker — Daily Update {today}"
+    subject = f"🇪🇺 Pay Transparency Tracker — Weekly Update {today}"
 
     html = f"""
 <html><body style="font-family: Arial, sans-serif; max-width: 700px; margin: 0 auto; color: #111;">
   <div style="background: #1e3a5f; padding: 20px; border-radius: 8px 8px 0 0;">
     <h2 style="color: white; margin: 0;">EU Pay Transparency Tracker</h2>
-    <p style="color: #93c5fd; margin: 4px 0 0;">Daily Update — {today}</p>
+    <p style="color: #93c5fd; margin: 4px 0 0;">Weekly Update — {today}</p>
   </div>
   <div style="background: #f8fafc; padding: 24px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 8px 8px;">
     <div style="white-space: pre-wrap; line-height: 1.6;">{analysis}</div>
@@ -220,7 +220,7 @@ def build_email(analysis: str) -> tuple[str, str]:
 </body></html>
 """
 
-    plain = f"""EU Pay Transparency Tracker — Daily Update {today}
+    plain = f"""EU Pay Transparency Tracker — Weekly Update {today}
 
 {analysis}
 
